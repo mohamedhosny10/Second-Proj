@@ -88,12 +88,51 @@ angular
         return deferred.promise;
       }
 
+    function remove(id) {
+      var deferred = $q.defer();
+
+     client
+      .from('customers')
+      .delete()
+      .eq('id', id)
+      .then(function (result) {
+        handleResult(deferred, result);
+    })
+    .catch(function (err) {
+      deferred.reject(err.message || 'Failed to delete customer');
+    });
+
+    return deferred.promise;
+  }
+  
+  function getPurchaseHistory(customerId) {
+  var deferred = $q.defer();
+
+  client
+    .from('invoices')
+    .select('*, invoice_items(*, medicines(name))')
+    .eq('customer_id', customerId)
+    .order('created_at', { ascending: false })
+    .then(function (result) {
+      handleResult(deferred, result);
+    })
+    .catch(function (err) {
+      deferred.reject(err.message || 'Failed to load purchase history');
+    });
+
+  return deferred.promise;
+}
+
       return {
         getAll: getAll,
         getById: getById,
         create: create,
-        update: update
+        update: update,
+        remove: remove,
+        getPurchaseHistory:getPurchaseHistory
       };
+
+    
     }
   ]);
 

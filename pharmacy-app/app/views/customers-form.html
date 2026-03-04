@@ -1,0 +1,45 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <div class="alert alert-danger" ng-if="vm.errorMessage">
+        {{ vm.errorMessage }}
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="mb-0">
+            {{ vm.isEdit ? 'Edit Customer' : 'New Customer' }}
+          </h5>
+        </div>
+
+        <div class="card-body">
+          <form name="customerForm" novalidate ng-submit="vm.save(customerForm)">
+
+            <div class="mb-3">
+              <label class="form-label">Customer Name</label>
+              <input type="text" class="form-control" name="full_name" ng-model="vm.customer.full_name" required>
+
+              <div class="invalid-feedback d-block" ng-show="customerForm.full_name.$touched && customerForm.full_name.$invalid">
+                Name is required
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <a href="#!/customers" class="btn btn-outline-secondary me-2">
+                Cancel
+              </a>
+
+              <button type="submit"class="btn btn-primary" ng-disabled="customerForm.$invalid">
+                Save
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
