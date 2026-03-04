@@ -1,0 +1,45 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="h4 mb-3 text-center">{{ vm.title }}</h1>
+        <form novalidate ng-submit="vm.submit()">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              ng-model="vm.credentials.email"
+              required
+            >
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              ng-model="vm.credentials.password"
+              required
+            >
+          </div>
+
+          <div class="mb-3" ng-if="vm.error">
+            <div class="alert alert-danger mb-0">
+              {{ vm.error }}
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary w-100"
+            ng-disabled="vm.loading"
+          >
+            <span ng-if="!vm.loading">Login</span>
+            <span ng-if="vm.loading">Logging in...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
