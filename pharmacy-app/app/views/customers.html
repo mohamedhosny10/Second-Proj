@@ -20,18 +20,30 @@
         </div>
       </div>
 
+      <div class="text-center py-5" ng-if="vm.loading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p class="text-muted mt-2">Loading customers...</p>
+</div>
+
       <div class="table-responsive">
         <table class="table table-hover align-middle">
           <thead class="table-light">
             <tr>
               <th>Name</th>
-              <th class="text-end">Actions</th>
+              <th >Phone</th>
+              <th>Address</th>
+              <th>Created at</th>
             </tr>
           </thead>
 
           <tbody>
             <tr ng-repeat="item in vm.customers">
               <td>{{ item.full_name }}</td>
+              <td>{{item.phone}}</td>
+              <td>{{item.address}}</td>
+              <td>{{item.created_at | date:'MMM d, y – h:mm a'}}</td>
               <td class="text-end">
 
                 <a ng-href="#!/customers/{{ item.id }}/history" class="btn btn-outline-info btn-sm me-2">
@@ -42,9 +54,9 @@
                   Edit
                 </a>
 
-                <button type="button" class="btn btn-outline-danger btn-sm" confirm-delete confirm-message="Delete this customer?" on-confirm="vm.deleteCustomer(item.id)">
-                  Delete
-                </button>
+               <button type="button" class="btn btn-outline-danger btn-sm" ng-click="vm.confirmDelete(item.id, item.full_name)">
+                 Delete
+               </button>
               </td>
             </tr>
 
