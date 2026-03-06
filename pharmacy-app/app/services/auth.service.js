@@ -12,12 +12,16 @@ angular
 
       function loadSessionFromStorage() {
         var raw = $window.localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          return;
-        }
+        if (!raw) return;
         try {
           var stored = JSON.parse(raw);
           currentUser = stored;
+          if (stored.access_token && stored.refresh_token) {
+            client.auth.setSession({
+              access_token: stored.access_token,
+              refresh_token: stored.refresh_token
+            });
+          }
         } catch (e) {
           $window.localStorage.removeItem(STORAGE_KEY);
         }

@@ -1,9 +1,29 @@
 angular
   .module('pharmacyApp.controllers')
   .controller('InvoiceDetailsController', [
-    function () {
+    '$routeParams',
+    'invoicesService',
+    function ($routeParams, invoicesService) {
       var vm = this;
       vm.title = 'Invoice Details';
+      vm.invoice = null;
+      vm.loading = false;
+      vm.error = null;
+
+      vm.load = function () {
+        vm.loading = true;
+        vm.error = null;
+        invoicesService.getById($routeParams.id)
+          .then(function (data) {
+            vm.invoice = data;
+            vm.loading = false;
+          })
+          .catch(function (err) {
+            vm.error = err;
+            vm.loading = false;
+          });
+      };
+
+      vm.load();
     }
   ]);
-

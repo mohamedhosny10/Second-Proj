@@ -13,40 +13,8 @@
     crossorigin="anonymous"
   >
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#!/dashboard">Pharmacy</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-              aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" href="#!/dashboard">Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#!/medicines">Medicines</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#!/customers">Customers</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#!/create-invoice">Create Invoice</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#!/admin-panel">Admin Panel</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="#!/login">Login</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+<body ng-controller="AppController as app">
+  <app-navbar role="{{app.currentUserRole}}" on-logout="app.logout()"></app-navbar>
 
   <div class="container">
     <div ng-view></div>
@@ -79,6 +47,11 @@
 
   <script src="app/guards/auth.guard.js"></script>
 
+  <script src="app/filters/stockStatus.filter.js"></script>
+  <script src="app/directives/navbar.directive.js"></script>
+  <script src="app/directives/medicineRow.directive.js"></script>
+
+  <script src="app/controllers/app.controller.js"></script>
   <script src="app/controllers/login.controller.js"></script>
   <script src="app/controllers/dashboard.controller.js"></script>
   <script src="app/controllers/medicines.controller.js"></script>

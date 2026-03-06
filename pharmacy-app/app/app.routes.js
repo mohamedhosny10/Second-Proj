@@ -39,6 +39,22 @@ angular
             roles: ['user', 'admin']
           }
         })
+        .when('/customers/new', {
+          templateUrl: 'app/views/customers-form.html',
+          controller: 'CustomersController',
+          controllerAs: 'vm',
+          data: {
+            roles: ['user', 'admin']
+          }
+        })
+        .when('/customers/edit/:id', {
+          templateUrl: 'app/views/customers-form.html',
+          controller: 'CustomersController',
+          controllerAs: 'vm',
+          data: {
+            roles: ['user', 'admin']
+          }
+        })
         .when('/create-invoice', {
           templateUrl: 'app/views/create-invoice.html',
           controller: 'CreateInvoiceController',
@@ -47,7 +63,7 @@ angular
             roles: ['user', 'admin']
           }
         })
-        .when('/invoice-details', {
+        .when('/invoice-details/:id', {
           templateUrl: 'app/views/invoice-details.html',
           controller: 'InvoiceDetailsController',
           controllerAs: 'vm',

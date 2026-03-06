@@ -2,9 +2,10 @@ angular
   .module('pharmacyApp.controllers')
   .controller('CustomersController', [
     '$location',
+    '$route',
     '$routeParams',
     'customersService',
-    function ($location, $routeParams, customersService) {
+    function ($location, $route, $routeParams, customersService) {
       var vm = this;
 
       vm.customers = [];
@@ -13,7 +14,7 @@ angular
       vm.isEdit = !!$routeParams.id;
       vm.errorMessage = '';
       vm.load = load;
-      vm.save= save;
+      vm.save = save;
       vm.deleteCustomer = deleteCustomer;
       vm.search = search;
 
@@ -25,8 +26,9 @@ angular
           .catch(function (err) {
             vm.errorMessage = err || 'Failed to load customer';
           });
-
-      } else if ($routeParams.id === undefined) {
+      } else if ($route.current && $route.current.originalPath.indexOf('new') !== -1) {
+        vm.customer = {};
+      } else {
         load();
       }
 

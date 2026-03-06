@@ -1,7 +1,78 @@
 <div class="py-3">
   <h1 class="h3 mb-3">{{ vm.title }}</h1>
-  <p class="text-muted">
-    Invoice creation form and related UI will be implemented here.
-  </p>
-</div>
 
+  <div ng-if="vm.error" class="alert alert-danger">
+    {{ vm.error }}
+  </div>
+  <div ng-if="vm.loading" class="alert alert-info">
+    Creating invoice...
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label">Customer</label>
+        <select
+          class="form-select"
+          ng-model="vm.selectedCustomerId"
+          ng-options="c.id as c.full_name for c in vm.customers"
+        >
+          <option value="">-- Select customer --</option>
+        </select>
+      </div>
+
+      <h2 class="h5 mb-3">Items</h2>
+      <button type="button" class="btn btn-sm btn-outline-primary mb-3" ng-click="vm.addItem()">
+        + Add medicine
+      </button>
+
+      <div ng-repeat="item in vm.items track by $index" class="row g-2 mb-2 align-items-end">
+        <div class="col-md-5">
+          <label class="form-label small">Medicine</label>
+          <select
+            class="form-select form-select-sm"
+            ng-model="item.medicine_id"
+            ng-options="m.id as m.name for m in vm.medicines"
+            ng-change="vm.onMedicineSelect(item)"
+          >
+            <option value="">-- Select --</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Qty</label>
+          <input type="number" class="form-control form-control-sm" ng-model="item.quantity" min="1">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Price</label>
+          <input type="number" step="0.01" class="form-control form-control-sm" ng-model="item.price">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label small">Line total</label>
+          <div class="form-control-plaintext small">
+            {{ (item.quantity || 0) * (item.price || 0) | currency }}
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button type="button" class="btn btn-sm btn-outline-danger" ng-click="vm.removeItem($index)">
+            ×
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-3 pt-3 border-top">
+        <strong>Total: {{ vm.calcTotal() | currency }}</strong>
+      </div>
+
+      <div class="mt-3">
+        <button
+          type="button"
+          class="btn btn-primary"
+          ng-click="vm.submit()"
+          ng-disabled="vm.loading || !vm.selectedCustomerId || !vm.items.length"
+        >
+          Create Invoice
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
