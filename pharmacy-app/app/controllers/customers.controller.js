@@ -18,7 +18,7 @@ angular
       vm.deleteCustomer = deleteCustomer;
       vm.search = search;
       vm.confirmDelete= confirmDelete;
-      vm.isHistory = $routeParams.action === 'history';
+      vm.isHistory = !!$routeParams.id && $location.path().indexOf('/history') !== -1;
 
        if (!vm.isEdit) {
         vm.customer.created_at = new Date().toISOString();
