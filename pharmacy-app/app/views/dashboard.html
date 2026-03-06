@@ -1,7 +1,48 @@
 <div class="py-3">
   <h1 class="h3 mb-3">{{ vm.title }}</h1>
-  <p class="text-muted">
-    Dashboard content will be implemented here.
-  </p>
-</div>
 
+  <div ng-if="vm.error" class="alert alert-danger">
+    {{ vm.error }}
+  </div>
+  <div ng-if="vm.loading" class="alert alert-info">
+    Loading...
+  </div>
+
+  <div ng-if="vm.overview && !vm.loading" class="row g-3">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Total Medicines</h5>
+          <p class="card-text display-6">{{ vm.overview.totalMedicines }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Total Customers</h5>
+          <p class="card-text display-6">{{ vm.overview.totalCustomers }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Total Invoices</h5>
+          <p class="card-text display-6">{{ vm.overview.totalInvoices }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card" ng-class="{'border-danger': vm.overview.lowStockCount > 0}">
+        <div class="card-body">
+          <h5 class="card-title">Low Stock Alert</h5>
+          <p class="card-text display-6" ng-class="{'text-danger': vm.overview.lowStockCount > 0}">
+            {{ vm.overview.lowStockCount }}
+          </p>
+          <small class="text-muted">Medicines with stock ≤ 10</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
