@@ -3,26 +3,71 @@
     <div class="card">
       <div class="card-body">
         <h1 class="h4 mb-3 text-center">{{ vm.title }}</h1>
-        <form novalidate ng-submit="vm.submit()">
+        <form name="loginForm" novalidate ng-submit="vm.submit()">
           <div class="mb-3">
             <label class="form-label">Email</label>
             <input
               type="email"
+              name="email"
               class="form-control"
               ng-model="vm.credentials.email"
-              required
+              ng-required="true"
+              ng-minlength="5"
+              ng-pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
             >
+            <span class="text-danger small d-block mt-1" ng-if="loginForm.email.$touched && loginForm.email.$invalid">
+              <span ng-if="loginForm.email.$error.required">Email is required.</span>
+              <span ng-if="!loginForm.email.$error.required && loginForm.email.$error.minlength">Email must be at least 5 characters.</span>
+              <span ng-if="!loginForm.email.$error.required && !loginForm.email.$error.minlength && loginForm.email.$error.pattern">Invalid email format.</span>
+            </span>
           </div>
           <div class="mb-3">
             <label class="form-label">Password</label>
             <input
               type="password"
+              name="password"
               class="form-control"
               ng-model="vm.credentials.password"
-              required
+              ng-required="true"
+              ng-minlength="1"
             >
+            <span class="text-danger small d-block mt-1" ng-if="loginForm.password.$touched && loginForm.password.$invalid">
+              Password is required.
+            </span>
+            <div class="mt-2 small" ng-if="vm.credentials.password">
+              <div ng-class="{'text-success': vm.hasUppercase, 'text-danger': !vm.hasUppercase}">
+                <span ng-if="vm.hasUppercase">✔</span>
+                <span ng-if="!vm.hasUppercase">✘</span>
+                Uppercase letter
+              </div>
+              <div ng-class="{'text-success': vm.hasLowercase, 'text-danger': !vm.hasLowercase}">
+                <span ng-if="vm.hasLowercase">✔</span>
+                <span ng-if="!vm.hasLowercase">✘</span>
+                Lowercase letter
+              </div>
+              <div ng-class="{'text-success': vm.hasNumber, 'text-danger': !vm.hasNumber}">
+                <span ng-if="vm.hasNumber">✔</span>
+                <span ng-if="!vm.hasNumber">✘</span>
+                Number
+              </div>
+              <div ng-class="{'text-success': vm.hasSpecial, 'text-danger': !vm.hasSpecial}">
+                <span ng-if="vm.hasSpecial">✔</span>
+                <span ng-if="!vm.hasSpecial">✘</span>
+                Special character
+              </div>
+              <div ng-class="{'text-success': vm.hasMinLength, 'text-danger': !vm.hasMinLength}">
+                <span ng-if="vm.hasMinLength">✔</span>
+                <span ng-if="!vm.hasMinLength">✘</span>
+                8 characters or more
+              </div>
+            </div>
           </div>
 
+          <div class="mb-3" ng-if="vm.signedUpMessage">
+            <div class="alert alert-success mb-0">
+              Account created. You can log in now.
+            </div>
+          </div>
           <div class="mb-3" ng-if="vm.error">
             <div class="alert alert-danger mb-0">
               {{ vm.error }}
@@ -32,14 +77,18 @@
           <button
             type="submit"
             class="btn btn-primary w-100"
-            ng-disabled="vm.loading"
+            ng-disabled="vm.loading || loginForm.$invalid"
           >
             <span ng-if="!vm.loading">Login</span>
             <span ng-if="vm.loading">Logging in...</span>
           </button>
+
+          <p class="text-center mt-3 mb-0 small text-muted">
+            Don't have an account?
+            <a href="#!/signup">Sign up</a>
+          </p>
         </form>
       </div>
     </div>
   </div>
 </div>
-

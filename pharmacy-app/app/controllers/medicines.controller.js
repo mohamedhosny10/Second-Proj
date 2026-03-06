@@ -10,7 +10,8 @@ angular
       vm.search = '';
       vm.loading = false;
       vm.error = null;
-      vm.isAdmin = authService.getCurrentUserRole() === 'admin';
+      vm.currentRole = authService.getCurrentUserRole();
+      vm.isAdmin = vm.currentRole === 'admin';
 
       vm.editing = null;
       vm.form = {
@@ -109,6 +110,11 @@ angular
             vm.error = err;
             vm.loading = false;
           });
+      };
+
+      vm.deleteMedicine = function (id) {
+        var item = vm.items.find(function (m) { return m.id === id; });
+        if (item) vm.remove(item);
       };
 
       vm.onSearchChange = function () {

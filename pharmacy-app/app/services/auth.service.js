@@ -4,20 +4,25 @@ angular
     '$q',
     '$window',
     '$location',
+    '$rootScope',
     'supabaseService',
-    function ($q, $window, $location, supabaseService) {
+    function ($q, $window, $location, $rootScope, supabaseService) {
       var STORAGE_KEY = 'pharmacyApp.session';
       var client = supabaseService.client;
       var currentUser = null;
 
       function loadSessionFromStorage() {
         var raw = $window.localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-          return;
-        }
+        if (!raw) return;
         try {
           var stored = JSON.parse(raw);
           currentUser = stored;
+          if (stored.access_token && stored.refresh_token) {
+            client.auth.setSession({
+              access_token: stored.access_token,
+              refresh_token: stored.refresh_token
+            });
+          }
         } catch (e) {
           $window.localStorage.removeItem(STORAGE_KEY);
         }
@@ -43,6 +48,49 @@ angular
       }
 
       loadSessionFromStorage();
+
+      function signUp(credentials) {
+        var deferred = $q.defer();
+        client.auth
+          .signUp({
+            email: credentials.email,
+            password: credentials.password,
+            options: credentials.full_name ? { data: { full_name: credentials.full_name } } : undefined
+          })
+          .then(function (result) {
+            if (result.error) {
+              deferred.reject(result.error.message || 'Sign up failed');
+              return;
+            }
+            var user = result.data && result.data.user;
+            if (!user) {
+              deferred.reject('No user returned');
+              return;
+            }
+            client
+              .from('users')
+              .insert({
+                id: user.id,
+                full_name: credentials.full_name || null,
+                email: user.email,
+                role: 'user'
+              })
+              .then(function (insertResult) {
+                if (insertResult.error) {
+                  deferred.resolve(result.data);
+                  return;
+                }
+                deferred.resolve(result.data);
+              })
+              .catch(function () {
+                deferred.resolve(result.data);
+              });
+          })
+          .catch(function (err) {
+            deferred.reject(err.message || 'Sign up failed');
+          });
+        return deferred.promise;
+      }
 
       function login(credentials) {
         var deferred = $q.defer();
@@ -70,6 +118,7 @@ angular
             }
 
             persistSession(session, role);
+            $rootScope.$broadcast('auth:login');
             $location.path('/dashboard');
             deferred.resolve(session);
           })
@@ -91,6 +140,7 @@ angular
               return;
             }
             clearSession();
+            $rootScope.$broadcast('auth:logout');
             $location.path('/login');
             deferred.resolve();
           })
@@ -117,6 +167,7 @@ angular
       }
 
       return {
+        signUp: signUp,
         login: login,
         logout: logout,
         isAuthenticated: isAuthenticated,
