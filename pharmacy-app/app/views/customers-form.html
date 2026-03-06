@@ -17,27 +17,32 @@
           <form name="customerForm" novalidate ng-submit="vm.save(customerForm)">
 
             <div class="mb-3">
+              <div>
               <label class="form-label">Customer Name</label>
               <input type="text" class="form-control" name="full_name" ng-model="vm.customer.full_name" required>
 
               <div class="invalid-feedback d-block" ng-show="customerForm.full_name.$touched && customerForm.full_name.$invalid">
                 Name is required
               </div>
-
+              </div>
+               
+              <div>
               <label class ="form-lable">Phone</label>
-               <input type="text" class="form-control" name="phone" ng-model="vm.customer.phone" required>
+               <input type="text" class="form-control" name="phone" ng-model="vm.customer.phone"  ng-minlength="11"  required>
 
               <div class="invalid-feedback d-block" ng-show="customerForm.phone.$touched && customerForm.phone.$invalid">
-                phone is required
+                phone is required and it must be 11 digits
+              </div>
               </div>
 
+              <div>
              <label class ="form-lable">Address</label>
-               <input type="text" class="form-control" name="address" ng-model="vm.customer.address"  ng-minlength="11" required>
+               <input type="text" class="form-control" name="address" ng-model="vm.customer.address"   required>
 
               <div class="invalid-feedback d-block" ng-show="customerForm.address.$touched && customerForm.address.$invalid">
                 address is required
               </div>
-
+              </div>
               <!-- <label class ="form-lable">Created At</label>
                <input type="date" class="form-control" name="created_at" ng-model="vm.customer.created_at" required>
 

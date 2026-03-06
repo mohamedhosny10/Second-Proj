@@ -12,7 +12,7 @@ angular
       vm.searchText = '';
       vm.isEdit = !!$routeParams.id && $routeParams.id !== 'new';
       vm.errorMessage = '';
-      vm.load = false;
+      vm.load = load;
       vm.save= save;
       vm.deleteCustomer = deleteCustomer;
       vm.search = search;
