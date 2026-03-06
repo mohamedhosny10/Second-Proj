@@ -2,10 +2,13 @@ angular
   .module('pharmacyApp.controllers')
   .controller('LoginController', [
     '$scope',
+    '$location',
     'authService',
-    function ($scope, authService) {
+    function ($scope, $location, authService) {
       var vm = this;
       vm.title = 'Login';
+      vm.signedUpMessage = $location.search().signedup === '1';
+      if (vm.signedUpMessage) $location.search('signedup', null);
       vm.credentials = {
         email: '',
         password: ''

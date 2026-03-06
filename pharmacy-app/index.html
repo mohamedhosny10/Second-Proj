@@ -14,7 +14,7 @@
   >
 </head>
 <body ng-controller="AppController as app">
-  <app-navbar role="{{app.currentUserRole}}" on-logout="app.logout()"></app-navbar>
+  <app-navbar role="app.currentUserRole" on-logout="app.logout()"></app-navbar>
 
   <div class="container">
     <div ng-view></div>
@@ -53,6 +53,7 @@
 
   <script src="app/controllers/app.controller.js"></script>
   <script src="app/controllers/login.controller.js"></script>
+  <script src="app/controllers/signup.controller.js"></script>
   <script src="app/controllers/dashboard.controller.js"></script>
   <script src="app/controllers/medicines.controller.js"></script>
   <script src="app/controllers/customers.controller.js"></script>

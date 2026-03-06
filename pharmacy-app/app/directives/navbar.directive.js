@@ -5,14 +5,19 @@ angular
       return {
         restrict: 'E',
         scope: {
-          role: '@',
+          role: '=',
           onLogout: '&'
         },
         templateUrl: 'app/directives/navbar.template.html',
         link: function (scope) {
-          scope.isAdmin = scope.role === 'admin';
-          scope.isUser = scope.role === 'user';
-          scope.isGuest = !scope.role || scope.role === 'guest';
+          function updateRoleFlags() {
+            var r = scope.role;
+            scope.isAdmin = r === 'admin';
+            scope.isUser = r === 'user';
+            scope.isGuest = !r || r === 'guest';
+          }
+          scope.$watch('role', updateRoleFlags);
+          updateRoleFlags();
         }
       };
     }

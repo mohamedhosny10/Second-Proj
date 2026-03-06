@@ -63,6 +63,11 @@
             </div>
           </div>
 
+          <div class="mb-3" ng-if="vm.signedUpMessage">
+            <div class="alert alert-success mb-0">
+              Account created. You can log in now.
+            </div>
+          </div>
           <div class="mb-3" ng-if="vm.error">
             <div class="alert alert-danger mb-0">
               {{ vm.error }}
@@ -77,6 +82,11 @@
             <span ng-if="!vm.loading">Login</span>
             <span ng-if="vm.loading">Logging in...</span>
           </button>
+
+          <p class="text-center mt-3 mb-0 small text-muted">
+            Don't have an account?
+            <a href="#!/signup">Sign up</a>
+          </p>
         </form>
       </div>
     </div>

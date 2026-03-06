@@ -15,6 +15,14 @@ angular
             roles: ['guest', 'user', 'admin']
           }
         })
+        .when('/signup', {
+          templateUrl: 'app/views/signup.html',
+          controller: 'SignupController',
+          controllerAs: 'vm',
+          data: {
+            roles: ['guest', 'user', 'admin']
+          }
+        })
         .when('/dashboard', {
           templateUrl: 'app/views/dashboard.html',
           controller: 'DashboardController',

@@ -12,8 +12,11 @@ angular
         authService.logout();
       };
 
-      $rootScope.$on('$routeChangeSuccess', function () {
+      function refreshRole() {
         vm.currentUserRole = authService.getCurrentUserRole();
-      });
+      }
+      $rootScope.$on('$routeChangeSuccess', refreshRole);
+      $rootScope.$on('auth:login', refreshRole);
+      $rootScope.$on('auth:logout', refreshRole);
     }
   ]);
