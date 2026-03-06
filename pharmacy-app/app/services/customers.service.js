@@ -110,7 +110,7 @@ angular
 
   client
     .from('invoices')
-    .select('*, invoice_items(*, medicines(name))')
+    .select('*, invoice_items(*, medicines(name, price))')
     .eq('customer_id', customerId)
     .order('created_at', { ascending: false })
     .then(function (result) {
