@@ -1,6 +1,6 @@
 angular
   .module('pharmacyApp.directives')
-  .directive('dashboardCard', [
+  .directive('statGlowCard', [
     function () {
       return {
         restrict: 'E',
@@ -8,7 +8,7 @@ angular
           title: '@',
           value: '='
         },
-        templateUrl: 'app/directives/dashboard-card.template.html'
+        templateUrl: 'app/directives/stat-glow-card.template.html'
       };
     }
   ]);

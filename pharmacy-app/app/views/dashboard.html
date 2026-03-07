@@ -1,21 +1,117 @@
 <div class="py-3">
-  <h1 class="h3 mb-4">{{ vm.title }}</h1>
+  <h1 class="h3 mb-4 pharmacy-hero-title">{{ vm.title }}</h1>
 
   <system-alert message="{{ vm.error }}" type="error"></system-alert>
-  <system-alert ng-if="vm.loading" message="Loading..." type="info"></system-alert>
+  <system-alert
+    ng-if="vm.loading"
+    message="Loading..."
+    type="info"
+  ></system-alert>
 
-  <div ng-if="vm.overview && !vm.loading" class="row g-3">
-    <div class="col-sm-6 col-md-3">
-      <dashboard-card title="Total Medicines" value="vm.overview.totalMedicines"></dashboard-card>
+  <div ng-if="vm.analytics && !vm.loading" class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <stat-glow-card
+        title="Total Sales"
+        value="vm.totalSalesFormatted"
+      ></stat-glow-card>
     </div>
-    <div class="col-sm-6 col-md-3">
-      <dashboard-card title="Total Customers" value="vm.overview.totalCustomers"></dashboard-card>
+    <div class="col-6 col-md-3">
+      <stat-glow-card
+        title="Active Prescriptions"
+        value="vm.analytics.activePrescriptions"
+      ></stat-glow-card>
     </div>
-    <div class="col-sm-6 col-md-3">
-      <dashboard-card title="Total Invoices" value="vm.overview.totalInvoices"></dashboard-card>
+    <div class="col-6 col-md-3">
+      <stat-glow-card
+        title="Out-of-Stock Items"
+        value="vm.analytics.outOfStockCount"
+      ></stat-glow-card>
     </div>
-    <div class="col-sm-6 col-md-3">
-      <dashboard-card title="Low Stock Medicines" value="vm.overview.lowStockCount"></dashboard-card>
+    <div class="col-6 col-md-3">
+      <stat-glow-card
+        title="Monthly Revenue"
+        value="vm.monthlyRevenueFormatted"
+      ></stat-glow-card>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-lg-8">
+      <div class="card h-100">
+        <div class="card-header">Revenue Trend</div>
+        <div class="card-body">
+          <div
+            ng-if="vm.chartsLoading"
+            class="text-center pharmacy-hero-subtitle py-5"
+          >
+            Loading chart...
+          </div>
+          <revenue-line-chart
+            ng-if="vm.revenueTrend && !vm.chartsLoading"
+            labels="vm.revenueTrend.labels"
+            values="vm.revenueTrend.data"
+          ></revenue-line-chart>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">Inventory Status</div>
+        <div class="card-body">
+          <inventory-doughnut-chart
+            ng-if="vm.inventoryStatus"
+            available="vm.inventoryStatus.available"
+            low-stock="vm.inventoryStatus.lowStock"
+            expired="vm.inventoryStatus.expired"
+          ></inventory-doughnut-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">Recent Transactions</div>
+    <div class="card-body p-0">
+      <div
+        ng-if="!vm.recentTransactions.length"
+        class="text-center pharmacy-hero-subtitle py-4"
+      >
+        <i class="bi bi-receipt app-table-empty-icon d-block mb-2"></i>
+        No transactions yet.
+      </div>
+      <div
+        ng-if="vm.recentTransactions.length"
+        class="table-responsive app-table-wrapper"
+      >
+        <table class="table table-sm mb-0 app-table">
+          <thead>
+            <tr>
+              <th>Invoice ID</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="tx in vm.recentTransactions track by tx.id">
+              <td>{{ tx.id }}</td>
+              <td>{{ tx.customers && tx.customers.full_name || '—' }}</td>
+              <td>{{ tx.total_amount | currency }}</td>
+              <td>{{ tx.created_at | date:'MMM d, y' }}</td>
+              <td class="text-end">
+                <a
+                  ng-href="#!/invoice-details/{{ tx.id }}"
+                  class="btn btn-sm btn-outline-secondary"
+                >
+                  <i class="bi bi-eye me-1"></i>
+                  <span>View</span>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

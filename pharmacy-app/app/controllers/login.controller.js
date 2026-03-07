@@ -1,10 +1,9 @@
 angular
   .module('pharmacyApp.controllers')
   .controller('LoginController', [
-    '$scope',
     '$location',
     'authService',
-    function ($scope, $location, authService) {
+    function ($location, authService) {
       var vm = this;
       vm.title = 'Login';
       vm.signedUpMessage = $location.search().signedup === '1';
@@ -15,18 +14,7 @@ angular
       };
       vm.loading = false;
       vm.error = null;
-
-      $scope.$watch('vm.credentials.password', function (pwd) {
-        if (!pwd) {
-          vm.hasUppercase = vm.hasLowercase = vm.hasNumber = vm.hasSpecial = vm.hasMinLength = false;
-          return;
-        }
-        vm.hasUppercase = /[A-Z]/.test(pwd);
-        vm.hasLowercase = /[a-z]/.test(pwd);
-        vm.hasNumber = /[0-9]/.test(pwd);
-        vm.hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
-        vm.hasMinLength = pwd.length >= 8;
-      });
+      vm.showPassword = false;
 
       vm.submit = function () {
         vm.error = null;
@@ -39,9 +27,8 @@ angular
           })
           .catch(function (err) {
             vm.loading = false;
-            vm.error = err;
+            vm.error = (err && err.message) ? err.message : String(err || 'Login failed');
           });
       };
     }
   ]);
-

@@ -19,7 +19,7 @@ angular
             vm.loading = false;
           })
           .catch(function (err) {
-            vm.error = err;
+            vm.error = (err && err.message) ? err.message : 'Failed to load invoice';
             vm.loading = false;
           });
       };

@@ -31,7 +31,7 @@ angular
 
       function updateRole(userId, role) {
         var deferred = $q.defer();
-        if (role !== 'user' && role !== 'admin') {
+        if (role !== 'user' && role !== 'staff' && role !== 'admin') {
           deferred.reject('Invalid role');
           return deferred.promise;
         }

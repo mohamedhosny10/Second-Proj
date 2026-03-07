@@ -1,15 +1,10 @@
-angular.module('pharmacyApp.controllers', []);
-angular.module('pharmacyApp.services', []);
-angular.module('pharmacyApp.guards', []);
-angular.module('pharmacyApp.directives', []);
-angular.module('pharmacyApp.filters', []);
+angular.module("pharmacyApp.controllers", []);
+angular.module("pharmacyApp.services", []);
+angular.module("pharmacyApp.directives", []);
 
-angular.module('pharmacyApp', [
-  'ngRoute',
-  'pharmacyApp.controllers',
-  'pharmacyApp.services',
-  'pharmacyApp.guards',
-  'pharmacyApp.directives',
-  'pharmacyApp.filters'
+angular.module("pharmacyApp", [
+  "ngRoute",
+  "pharmacyApp.controllers",
+  "pharmacyApp.services",
+  "pharmacyApp.directives",
 ]);
-

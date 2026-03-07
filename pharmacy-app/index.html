@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pharmacy Management System</title>
+  <link rel="icon" type="image/png" href="app/public/assets/favicon.png">
 
   <!-- Bootstrap 5 CSS -->
   <link
@@ -12,11 +13,20 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
     crossorigin="anonymous"
   >
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+  <!-- Pharmacy theme (Figma color palette + overrides) -->
+  <link rel="stylesheet" href="app/css/theme.css">
 </head>
-<body ng-controller="AppController as app">
-  <app-navbar role="app.currentUserRole" on-logout="app.logout()"></app-navbar>
+<body ng-controller="AppController as app" class="pharmacy-theme">
+  <app-navbar ng-if="app.showAppNavbar" role="app.currentUserRole" on-logout="app.logout()"></app-navbar>
 
-  <div class="container">
+  <loading-spinner ng-if="app.routeLoading"></loading-spinner>
+
+  <div ng-class="{'container': app.showAppNavbar && !app.showFullWidthLayout}" class="main-content">
     <div ng-view></div>
   </div>
 
@@ -33,6 +43,8 @@
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"
   ></script>
+  <!-- Chart.js for dashboard analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <!-- Application scripts -->
   <script src="app/app.module.js"></script>
@@ -45,13 +57,17 @@
   <script src="app/services/invoices.service.js"></script>
   <script src="app/services/dashboard.service.js"></script>
   <script src="app/services/users.service.js"></script>
+  <script src="app/services/landing.service.js"></script>
 
   <script src="app/guards/auth.guard.js"></script>
 
   <script src="app/filters/stockStatus.filter.js"></script>
   <script src="app/directives/navbar.directive.js"></script>
-  <script src="app/directives/medicineRow.directive.js"></script>
-  <script src="app/directives/dashboard-card.directive.js"></script>
+  <script src="app/directives/landing-navbar.directive.js"></script>
+  <script src="app/directives/stat-glow-card.directive.js"></script>
+  <script src="app/directives/revenue-line-chart.directive.js"></script>
+  <script src="app/directives/inventory-doughnut-chart.directive.js"></script>
+  <script src="app/directives/loading-spinner.directive.js"></script>
   <script src="app/directives/system-alert.directive.js"></script>
 
   <script src="app/controllers/app.controller.js"></script>
@@ -63,7 +79,7 @@
   <script src="app/controllers/create-invoice.controller.js"></script>
   <script src="app/controllers/invoice-details.controller.js"></script>
   <script src="app/controllers/admin-panel.controller.js"></script>
-  <script src="app/controllers/not-found.controller.js"></script>
+  <script src="app/controllers/landing.controller.js"></script>
 </body>
 </html>
 

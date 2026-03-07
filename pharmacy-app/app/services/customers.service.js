@@ -88,6 +88,10 @@ angular
         return deferred.promise;
       }
 
+      function updateCustomer(id, payload) {
+        return update(id, payload);
+      }
+
     function remove(id) {
       var deferred = $q.defer();
 
@@ -128,6 +132,7 @@ angular
         getById: getById,
         create: create,
         update: update,
+        updateCustomer: updateCustomer,
         remove: remove,
         getPurchaseHistory:getPurchaseHistory
       };

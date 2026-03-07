@@ -73,7 +73,7 @@ angular
                 id: user.id,
                 full_name: credentials.full_name || null,
                 email: user.email,
-                role: 'user'
+                role: 'staff'
               })
               .then(function (insertResult) {
                 if (insertResult.error) {
@@ -107,7 +107,7 @@ angular
             if (res.error || !res.data) {
               d.resolve('user');
             } else {
-              d.resolve((res.data.role === 'admin' ? 'admin' : 'user'));
+              d.resolve(res.data.role === 'admin' ? 'admin' : (res.data.role === 'staff' ? 'staff' : 'user'));
             }
           })
           .catch(function () {

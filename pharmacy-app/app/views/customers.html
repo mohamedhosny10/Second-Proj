@@ -1,29 +1,36 @@
 <div class="container mt-4">
   <div class="card shadow-sm">
-
     <div class="alert alert-danger mx-3 mt-3" ng-if="vm.errorMessage">
       {{ vm.errorMessage }}
     </div>
 
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Customers</h5>
-      <a href="#!/customers/new" class="btn btn-primary btn-sm">
+      <button
+        type="button"
+        class="btn pharmacy-cta-primary btn-sm"
+        ng-click="vm.openEditModal()"
+      >
         + Add Customer
-      </a>
+      </button>
     </div>
 
     <div class="card-body">
-
       <div class="row mb-3">
-        <div class="col-md-4">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Search customers..."
-            ng-model="vm.searchText"
-            ng-model-options="{ debounce: 300 }"
-            ng-change="vm.search()"
-          >
+        <div class="col-md-4 app-table-search">
+          <div class="input-group input-group-sm">
+            <span class="input-group-text">
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search customers..."
+              ng-model="vm.searchText"
+              ng-model-options="{ debounce: 300 }"
+              ng-change="vm.search()"
+            />
+          </div>
         </div>
       </div>
 
@@ -33,9 +40,9 @@
         </div>
         <p class="text-muted mt-2">Loading customers...</p>
       </div>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead class="table-light">
+      <div class="table-responsive app-table-wrapper" ng-if="!vm.loading">
+        <table class="table table-hover align-middle app-table">
+          <thead>
             <tr>
               <th>Name</th>
               <th>Phone</th>
@@ -46,36 +53,143 @@
           </thead>
 
           <tbody>
-            <tr ng-repeat="item in vm.customers">
+            <tr ng-repeat="item in vm.customers track by item.id">
               <td>{{ item.full_name }}</td>
               <td>{{ item.phone }}</td>
               <td>{{ item.address }}</td>
-              <td>{{ item.created_at | date:'MMM d, y – h:mm a' }}</td>
+              <td>{{ item.created_at | date:'MMM d, y' }}</td>
               <td class="text-end">
-
-                <a ng-href="#!/customers/{{ item.id }}/history" class="btn btn-outline-info btn-sm me-2">
-                  History
+                <a
+                  ng-href="#!/customers/{{ item.id }}/history"
+                  class="btn btn-outline-info btn-sm me-2"
+                >
+                  <i class="bi bi-clock-history me-1"></i>
+                  <span>History</span>
                 </a>
 
-                <a ng-href="#!/customers/edit/{{ item.id }}" class="btn btn-outline-secondary btn-sm me-2">
-                  Edit
-                </a>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm me-2"
+                  ng-click="vm.openEditModal(item)"
+                >
+                  <i class="bi bi-pencil me-1"></i>
+                  <span>Edit</span>
+                </button>
 
-               <button type="button" class="btn btn-outline-danger btn-sm" ng-click="vm.confirmDelete(item.id, item.full_name)">
-                 Delete
-               </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  ng-click="vm.confirmDelete(item.id, item.full_name)"
+                >
+                  <i class="bi bi-trash me-1"></i>
+                  <span>Delete</span>
+                </button>
               </td>
             </tr>
 
             <tr ng-if="!vm.customers.length">
-              <td colspan="5" class="text-center text-muted py-4">
+              <td colspan="5" class="text-center app-table-empty-cell py-4">
+                <i class="bi bi-people app-table-empty-icon d-block mb-2"></i>
                 No customers found
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
 
+  <div
+    class="modal fade pharmacy-modal-overlay"
+    ng-class="{'show d-block': vm.showEditModal}"
+    tabindex="-1"
+    role="dialog"
+    ng-if="vm.showEditModal"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content border-0 bg-transparent">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="mb-0">
+              {{ vm.modalIsEdit ? 'Edit Customer' : 'New Customer' }}
+            </h5>
+          </div>
+          <div class="card-body">
+            <form
+              name="editCustomerForm"
+              novalidate
+              ng-submit="vm.saveEdit(editCustomerForm)"
+            >
+              <div class="mb-3">
+                <label class="form-label">Customer Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="full_name"
+                  ng-model="vm.editModel.full_name"
+                  required
+                />
+                <div
+                  class="invalid-feedback d-block"
+                  ng-show="editCustomerForm.full_name.$touched && editCustomerForm.full_name.$invalid"
+                >
+                  Name is required
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Phone</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="phone"
+                  ng-model="vm.editModel.phone"
+                  ng-minlength="11"
+                  required
+                />
+                <div
+                  class="invalid-feedback d-block"
+                  ng-show="editCustomerForm.phone.$touched && editCustomerForm.phone.$invalid"
+                >
+                  Phone is required and it must be 11 digits
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Address</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="address"
+                  ng-model="vm.editModel.address"
+                  required
+                />
+                <div
+                  class="invalid-feedback d-block"
+                  ng-show="editCustomerForm.address.$touched && editCustomerForm.address.$invalid"
+                >
+                  Address is required
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="btn pharmacy-cta-secondary me-2"
+                  ng-click="vm.closeEditModal()"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="btn pharmacy-cta-primary"
+                  ng-disabled="editCustomerForm.$invalid || vm.savingEdit"
+                >
+                  <span ng-if="!vm.savingEdit">Save</span>
+                  <span ng-if="vm.savingEdit">Saving...</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
