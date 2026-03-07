@@ -7,7 +7,7 @@ angular
           return 'Unknown';
         }
         var qty = parseInt(stockQuantity, 10);
-        return qty <= 5 ? 'Low Stock' : 'Available';
+        return qty <= 10 ? 'Low Stock' : 'Available';
       };
     }
   ]);

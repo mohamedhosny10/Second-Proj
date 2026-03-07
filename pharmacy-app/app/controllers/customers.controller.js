@@ -17,25 +17,29 @@ angular
       vm.save = save;
       vm.deleteCustomer = deleteCustomer;
       vm.search = search;
-      vm.confirmDelete= confirmDelete;
-      vm.isHistory = $routeParams.action === 'history';
+      vm.confirmDelete = confirmDelete;
+      vm.history = [];
+      vm.isHistory = $route.current && $route.current.originalPath && $route.current.originalPath.indexOf('history') !== -1;
 
-       if (!vm.isEdit) {
+      if (!vm.isEdit) {
         vm.customer.created_at = new Date().toISOString();
       }
-      
-      if(vm.isHistory){
+
+      if (vm.isHistory && $routeParams.id) {
         customersService.getById($routeParams.id)
-        .then (function(data){
-          vm.customer =data || {};
-        });
-         customersService.getPurchaseHistory($routeParams.id)
-         .then (function (data){
-          vm.history = data|| [];
-         })
-         .catch(function(err){
-           vm.errorMessage = err || 'Failed to load history';
-         })
+          .then(function (data) {
+            vm.customer = data || {};
+          })
+          .catch(function (err) {
+            vm.errorMessage = err || 'Failed to load customer';
+          });
+        customersService.getPurchaseHistory($routeParams.id)
+          .then(function (data) {
+            vm.history = data || [];
+          })
+          .catch(function (err) {
+            vm.errorMessage = err || 'Failed to load history';
+          });
       }
       if (vm.isEdit) {
         customersService.getById($routeParams.id)

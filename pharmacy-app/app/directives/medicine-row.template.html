@@ -2,7 +2,7 @@
 <td>{{ medicine.category }}</td>
 <td>{{ medicine.price | currency }}</td>
 <td ng-class="{'text-danger': isLowStock, 'text-success': !isLowStock}">
-  {{ medicine.stock_quantity }} ({{ stockStatus() }})
+  {{ medicine.stock_quantity }} ({{ medicine.stock_quantity | stockStatus }})
 </td>
 <td>{{ medicine.expiry_date | date:'yyyy-MM-dd' }}</td>
 <td class="text-end">

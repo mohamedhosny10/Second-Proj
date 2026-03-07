@@ -92,6 +92,30 @@ angular
         return deferred.promise;
       }
 
+      function fetchRoleFromDb(userId) {
+        var d = $q.defer();
+        if (!userId) {
+          d.resolve('user');
+          return d.promise;
+        }
+        client
+          .from('users')
+          .select('role')
+          .eq('id', userId)
+          .single()
+          .then(function (res) {
+            if (res.error || !res.data) {
+              d.resolve('user');
+            } else {
+              d.resolve((res.data.role === 'admin' ? 'admin' : 'user'));
+            }
+          })
+          .catch(function () {
+            d.resolve('user');
+          });
+        return d.promise;
+      }
+
       function login(credentials) {
         var deferred = $q.defer();
 
@@ -112,20 +136,38 @@ angular
               return;
             }
 
-            var role = 'user';
-            if (session.user && session.user.email === 'admin@example.com') {
-              role = 'admin';
-            }
-
-            persistSession(session, role);
-            $rootScope.$broadcast('auth:login');
-            $location.path('/dashboard');
-            deferred.resolve(session);
+            var userId = session.user && session.user.id;
+            var email = session.user && session.user.email;
+            fetchRoleFromDb(userId).then(function (role) {
+              if (email === 'admin@example.com') role = 'admin';
+              persistSession(session, role);
+              $rootScope.$broadcast('auth:login');
+              $location.path('/dashboard');
+              deferred.resolve(session);
+            });
           })
           .catch(function (err) {
             deferred.reject(err.message || 'Login failed');
           });
 
+        return deferred.promise;
+      }
+
+      function refreshUserRole() {
+        var deferred = $q.defer();
+        if (!currentUser || !currentUser.user || !currentUser.user.id) {
+          deferred.resolve();
+          return deferred.promise;
+        }
+        fetchRoleFromDb(currentUser.user.id).then(function (role) {
+          if (currentUser) {
+            if (currentUser.user && currentUser.user.email === 'admin@example.com') role = 'admin';
+            currentUser.role = role;
+            $window.localStorage.setItem(STORAGE_KEY, JSON.stringify(currentUser));
+            $rootScope.$broadcast('auth:roleUpdated');
+          }
+          deferred.resolve();
+        });
         return deferred.promise;
       }
 
@@ -140,8 +182,10 @@ angular
               return;
             }
             clearSession();
-            $rootScope.$broadcast('auth:logout');
-            $location.path('/login');
+            $rootScope.$applyAsync(function () {
+              $rootScope.$broadcast('auth:logout');
+              $location.path('/login');
+            });
             deferred.resolve();
           })
           .catch(function (err) {
@@ -172,7 +216,8 @@ angular
         logout: logout,
         isAuthenticated: isAuthenticated,
         getCurrentUserRole: getCurrentUserRole,
-        getCurrentUser: getCurrentUser
+        getCurrentUser: getCurrentUser,
+        refreshUserRole: refreshUserRole
       };
     }
   ]);

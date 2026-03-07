@@ -1,7 +1,138 @@
 <div class="py-3">
-  <h1 class="h3 mb-3">{{ vm.title }}</h1>
-  <p class="text-muted">
-    Admin-specific management tools and settings will be implemented here.
-  </p>
-</div>
+  <h1 class="h3 mb-4">Admin Panel</h1>
 
+  <!-- System Statistics -->
+  <section class="mb-4">
+    <h2 class="h5 mb-3">System Statistics</h2>
+    <system-alert message="{{ statsError }}" type="error"></system-alert>
+    <system-alert ng-if="statsLoading" message="Loading..." type="info"></system-alert>
+    <div ng-if="!statsLoading && !statsError && stats" class="row g-3">
+      <div class="col-sm-6 col-md-3">
+        <dashboard-card title="Total Medicines" value="stats.totalMedicines"></dashboard-card>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <dashboard-card title="Total Customers" value="stats.totalCustomers"></dashboard-card>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <dashboard-card title="Total Invoices" value="stats.totalInvoices"></dashboard-card>
+      </div>
+      <div class="col-sm-6 col-md-3">
+        <dashboard-card title="Low Stock Medicines" value="stats.lowStockCount"></dashboard-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Navigation -->
+  <section class="mb-4">
+    <h2 class="h5 mb-3">Quick Navigation</h2>
+    <div class="d-flex flex-wrap gap-2">
+      <a href="#!/medicines" class="btn btn-outline-primary">Manage Medicines</a>
+      <a href="#!/customers" class="btn btn-outline-primary">Manage Customers</a>
+      <a href="#!/create-invoice" class="btn btn-outline-primary">Create Invoice</a>
+    </div>
+  </section>
+
+  <!-- Low Stock Alert -->
+  <section class="mb-4">
+    <h2 class="h5 mb-3">Low Stock Alert</h2>
+    <system-alert message="{{ lowStockError }}" type="error"></system-alert>
+    <system-alert ng-if="lowStockLoading" message="Loading..." type="info"></system-alert>
+    <div ng-if="!lowStockLoading && !lowStockError" class="card">
+      <div class="card-body p-0">
+        <div ng-if="!lowStockMedicines.length" class="text-center text-muted py-4">
+          No low stock medicines.
+        </div>
+        <table ng-if="lowStockMedicines.length" class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Medicine Name</th>
+              <th>Category</th>
+              <th>Stock Quantity</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="m in lowStockMedicines">
+              <td>{{ m.name }}</td>
+              <td>{{ m.category }}</td>
+              <td>{{ m.stock_quantity }}</td>
+              <td>{{ m.price | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Invoices -->
+  <section class="mb-4">
+    <h2 class="h5 mb-3">Recent Invoices</h2>
+    <system-alert message="{{ invoicesError }}" type="error"></system-alert>
+    <system-alert ng-if="invoicesLoading" message="Loading..." type="info"></system-alert>
+    <div ng-if="!invoicesLoading && !invoicesError" class="card">
+      <div class="card-body p-0">
+        <div ng-if="!recentInvoices.length" class="text-center text-muted py-4">
+          No invoices found.
+        </div>
+        <table ng-if="recentInvoices.length" class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Invoice ID</th>
+              <th>Customer Name</th>
+              <th>Total Amount</th>
+              <th>Date</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="inv in recentInvoices">
+              <td>{{ inv.id }}</td>
+              <td>{{ inv.customers && inv.customers.full_name }}</td>
+              <td>{{ inv.total_amount | currency }}</td>
+              <td>{{ inv.created_at | date:'medium' }}</td>
+              <td class="text-end">
+                <a ng-href="#!/invoice-details/{{ inv.id }}" class="btn btn-sm btn-outline-secondary">View</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- User Management -->
+  <section class="mb-4">
+    <h2 class="h5 mb-3">User Management</h2>
+    <system-alert message="{{ usersError }}" type="error"></system-alert>
+    <system-alert ng-if="usersLoading" message="Loading..." type="info"></system-alert>
+    <div ng-if="!usersLoading && !usersError" class="card">
+      <div class="card-body p-0">
+        <div ng-if="!users.length" class="text-center text-muted py-4">
+          No users found.
+        </div>
+        <table ng-if="users.length" class="table table-sm table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="u in users">
+              <td>{{ u.full_name || '—' }}</td>
+              <td>{{ u.email }}</td>
+              <td><span class="badge" ng-class="u.role === 'admin' ? 'bg-primary' : 'bg-secondary'">{{ u.role }}</span></td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-primary" ng-click="changeUserRole(u)">
+                  {{ u.role === 'admin' ? 'Set User' : 'Set Admin' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

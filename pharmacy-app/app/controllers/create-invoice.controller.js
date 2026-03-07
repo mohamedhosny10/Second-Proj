@@ -13,6 +13,7 @@ angular
       vm.medicines = [];
       vm.selectedCustomerId = null;
       vm.items = [];
+      vm.total = 0;
       vm.loading = false;
       vm.error = null;
 
@@ -20,7 +21,7 @@ angular
         customersService.getAll().then(function (data) {
           vm.customers = data || [];
         }).catch(function (err) {
-          vm.error = err;
+          vm.error = (err && err.message) ? err.message : String(err || 'Failed to load customers');
         });
       };
 
@@ -28,7 +29,7 @@ angular
         medicinesService.getAll().then(function (data) {
           vm.medicines = data || [];
         }).catch(function (err) {
-          vm.error = err;
+          vm.error = (err && err.message) ? err.message : String(err || 'Failed to load medicines');
         });
       };
 
@@ -39,10 +40,20 @@ angular
           quantity: 1,
           price: 0
         });
+        vm.updateTotal();
       };
 
       vm.removeItem = function (index) {
         vm.items.splice(index, 1);
+        vm.updateTotal();
+      };
+
+      vm.updateTotal = function () {
+        var sum = 0;
+        vm.items.forEach(function (i) {
+          sum += (i.quantity || 0) * (i.price || 0);
+        });
+        vm.total = sum;
       };
 
       vm.onMedicineSelect = function (item) {
@@ -51,14 +62,7 @@ angular
           item.medicine = m;
           item.price = m.price;
         }
-      };
-
-      vm.calcTotal = function () {
-        var sum = 0;
-        vm.items.forEach(function (i) {
-          sum += (i.quantity || 0) * (i.price || 0);
-        });
-        return sum;
+        vm.updateTotal();
       };
 
       vm.submit = function () {
@@ -74,8 +78,8 @@ angular
 
         var payload = {
           customer_id: vm.selectedCustomerId,
-          created_by: createdBy,
-          total_amount: vm.calcTotal(),
+          
+          total_amount: vm.total,
           items: vm.items.map(function (i) {
             return {
               medicine_id: i.medicine_id,
@@ -92,7 +96,7 @@ angular
           })
           .catch(function (err) {
             vm.loading = false;
-            vm.error = err;
+            vm.error = (err && err.message) ? err.message : String(err || 'Failed to create invoice');
           });
       };
 
