@@ -1,0 +1,9 @@
+{
+  "name": "pharmacy-management-system",
+  "version": "1.0.0",
+  "description": "Pharmacy Management System",
+  "private": true,
+  "scripts": {
+    "start": "serve pharmacy-app"
+  }
+}

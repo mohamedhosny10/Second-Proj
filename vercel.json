@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/pharmacy-app/$1"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/pharmacy-app/index.html",
+      "permanent": true
+    }
+  ]
+}
