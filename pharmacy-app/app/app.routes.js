@@ -1,129 +1,128 @@
 angular
-  .module('pharmacyApp')
+  .module("pharmacyApp")
   .config([
-    '$routeProvider',
-    '$locationProvider',
+    "$routeProvider",
+    "$locationProvider",
     function ($routeProvider, $locationProvider) {
-      $locationProvider.hashPrefix('!');
+      $locationProvider.hashPrefix("!");
 
       $routeProvider
-        .when('/login', {
-          templateUrl: 'app/views/login.html',
-          controller: 'LoginController',
-          controllerAs: 'vm',
+        .when("/", {
+          templateUrl: "app/views/landing.html",
+          controller: "LandingController",
+          controllerAs: "vm",
           data: {
-            roles: ['guest', 'user', 'admin']
-          }
+            roles: ["guest", "user", "admin"],
+          },
         })
-        .when('/signup', {
-          templateUrl: 'app/views/signup.html',
-          controller: 'SignupController',
-          controllerAs: 'vm',
+        .when("/login", {
+          templateUrl: "app/views/login.html",
+          controller: "LoginController",
+          controllerAs: "vm",
           data: {
-            roles: ['guest', 'user', 'admin']
-          }
+            roles: ["guest", "user", "admin"],
+          },
         })
-        .when('/dashboard', {
-          templateUrl: 'app/views/dashboard.html',
-          controller: 'DashboardController',
-          controllerAs: 'vm',
+        .when("/signup", {
+          templateUrl: "app/views/signup.html",
+          controller: "SignupController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
+            roles: ["guest", "user", "admin"],
+          },
         })
-        .when('/medicines', {
-          templateUrl: 'app/views/medicines.html',
-          controller: 'MedicinesController',
-          controllerAs: 'vm',
+        .when("/dashboard", {
+          templateUrl: "app/views/dashboard.html",
+          controller: "DashboardController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
+            roles: ["user", "staff", "admin"],
+          },
         })
-        .when('/customers', {
-          templateUrl: 'app/views/customers.html',
-          controller: 'CustomersController',
-          controllerAs: 'vm',
+        .when("/medicines", {
+          templateUrl: "app/views/medicines.html",
+          controller: "MedicinesController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
+            roles: ["user", "staff", "admin"],
+          },
         })
-        .when('/customers/new', {
-          templateUrl: 'app/views/customers-form.html',
-          controller: 'CustomersController',
-          controllerAs: 'vm',
+        .when("/customers", {
+          templateUrl: "app/views/customers.html",
+          controller: "CustomersController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
+            roles: ["user", "staff", "admin"],
+          },
         })
-        .when('/customers/edit/:id', {
-          templateUrl: 'app/views/customers-form.html',
-          controller: 'CustomersController',
-          controllerAs: 'vm',
+        .when("/customers/:id/history", {
+          templateUrl: "app/views/customers-history.html",
+          controller: "CustomersController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
+            roles: ["user", "staff", "admin"],
+          },
         })
-        .when('/customers/:id/history', {
-          templateUrl: 'app/views/customers-history.html',
-          controller: 'CustomersController',
-          controllerAs: 'vm',
+        .when("/create-invoice", {
+          templateUrl: "app/views/create-invoice.html",
+          controller: "CreateInvoiceController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
+            roles: ["user", "staff", "admin"],
+          },
         })
-        .when('/create-invoice', {
-          templateUrl: 'app/views/create-invoice.html',
-          controller: 'CreateInvoiceController',
-          controllerAs: 'vm',
+        .when("/invoice-details/:id", {
+          templateUrl: "app/views/invoice-details.html",
+          controller: "InvoiceDetailsController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
+            roles: ["user", "staff", "admin"],
+          },
         })
-        .when('/invoice-details/:id', {
-          templateUrl: 'app/views/invoice-details.html',
-          controller: 'InvoiceDetailsController',
-          controllerAs: 'vm',
+        .when("/admin-panel", {
+          templateUrl: "app/views/admin-panel.html",
+          controller: "AdminPanelController",
+          controllerAs: "vm",
           data: {
-            roles: ['user', 'admin']
-          }
-        })
-        .when('/admin-panel', {
-          templateUrl: 'app/views/admin-panel.html',
-          controller: 'AdminPanelController',
-          controllerAs: 'vm',
-          data: {
-            roles: ['admin']
-          }
-        })
-        .when('/404', {
-          templateUrl: 'app/views/404.html',
-          controller: 'NotFoundController',
-          controllerAs: 'vm',
-          data: {
-            roles: ['guest', 'user', 'admin']
-          }
+            roles: ["admin"],
+          },
         })
         .otherwise({
-          redirectTo: '/404'
+          redirectTo: "/",
         });
-    }
+    },
   ])
   .run([
-    '$rootScope',
-    '$location',
-    'authGuard',
-    function ($rootScope, $location, authGuard) {
-      $rootScope.$on('$routeChangeStart', function (event, next) {
+    "$rootScope",
+    "$location",
+    "authService",
+    function ($rootScope, $location, authService) {
+      $rootScope.$on("$routeChangeStart", function (event, next) {
         if (!next) {
           return;
         }
 
-        var allowed = authGuard.canAccess(next);
+        // --- Inlined Auth Guard Logic ---
+        var allowed = true;
+        if (next.data && next.data.roles) {
+          var requiredRoles = next.data.roles;
+          var userRole = authService.getCurrentUserRole();
+          var isAuth = authService.isAuthenticated();
+
+          if (!isAuth && requiredRoles.indexOf("guest") === -1) {
+            allowed = false;
+          } else if (userRole) {
+            allowed = requiredRoles.indexOf(userRole) !== -1;
+          } else {
+            allowed = false;
+          }
+        }
+        // --------------------------------
+
         if (!allowed) {
           event.preventDefault();
-          $location.path('/login');
+          $location.path("/login");
         }
       });
-    }
+    },
   ]);
-

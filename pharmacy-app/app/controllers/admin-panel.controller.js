@@ -13,18 +13,19 @@ angular
       $scope.stats = null;
       $scope.statsLoading = false;
       $scope.statsError = null;
-
       $scope.lowStockMedicines = [];
       $scope.lowStockLoading = false;
       $scope.lowStockError = null;
-
       $scope.recentInvoices = [];
       $scope.invoicesLoading = false;
       $scope.invoicesError = null;
-
       $scope.users = [];
       $scope.usersLoading = false;
       $scope.usersError = null;
+
+      function errMsg(err, fallback) {
+        return (err && err.message) ? err.message : (err || fallback);
+      }
 
       function loadStats() {
         $scope.statsLoading = true;
@@ -32,54 +33,38 @@ angular
         dashboardService.getOverview()
           .then(function (data) {
             $scope.stats = data;
-            $scope.statsLoading = false;
           })
           .catch(function (err) {
-            $scope.statsError = (err && err.message) ? err.message : 'Failed to load statistics';
-            $scope.statsLoading = false;
-          });
+            $scope.statsError = errMsg(err, 'Failed to load statistics');
+          })
+          .finally(function () { $scope.statsLoading = false; });
       }
 
       function loadLowStock() {
         $scope.lowStockLoading = true;
         $scope.lowStockError = null;
         medicinesService.getLowStock(9)
-          .then(function (data) {
-            $scope.lowStockMedicines = data || [];
-            $scope.lowStockLoading = false;
-          })
-          .catch(function (err) {
-            $scope.lowStockError = (err && err.message) ? err.message : 'Failed to load low stock medicines';
-            $scope.lowStockLoading = false;
-          });
+          .then(function (data) { $scope.lowStockMedicines = data || []; })
+          .catch(function (err) { $scope.lowStockError = errMsg(err, 'Failed to load low stock medicines'); })
+          .finally(function () { $scope.lowStockLoading = false; });
       }
 
       function loadRecentInvoices() {
         $scope.invoicesLoading = true;
         $scope.invoicesError = null;
         invoicesService.getAll()
-          .then(function (data) {
-            $scope.recentInvoices = (data || []).slice(0, 10);
-            $scope.invoicesLoading = false;
-          })
-          .catch(function (err) {
-            $scope.invoicesError = (err && err.message) ? err.message : 'Failed to load invoices';
-            $scope.invoicesLoading = false;
-          });
+          .then(function (data) { $scope.recentInvoices = (data || []).slice(0, 10); })
+          .catch(function (err) { $scope.invoicesError = errMsg(err, 'Failed to load invoices'); })
+          .finally(function () { $scope.invoicesLoading = false; });
       }
 
       function loadUsers() {
         $scope.usersLoading = true;
         $scope.usersError = null;
         usersService.getAll()
-          .then(function (data) {
-            $scope.users = data || [];
-            $scope.usersLoading = false;
-          })
-          .catch(function (err) {
-            $scope.usersError = (err && err.message) ? err.message : 'Failed to load users';
-            $scope.usersLoading = false;
-          });
+          .then(function (data) { $scope.users = data || []; })
+          .catch(function (err) { $scope.usersError = errMsg(err, 'Failed to load users'); })
+          .finally(function () { $scope.usersLoading = false; });
       }
 
       $scope.changeUserRole = function (user) {
@@ -91,7 +76,7 @@ angular
             loadUsers();
           })
           .catch(function (err) {
-            $scope.usersError = (err && err.message) ? err.message : 'Failed to update role. Check Supabase RLS: allow UPDATE on users for authenticated/admin.';
+            $scope.usersError = errMsg(err, 'Failed to update role.');
           });
       };
 

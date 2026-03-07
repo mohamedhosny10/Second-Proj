@@ -1,93 +1,93 @@
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card">
-      <div class="card-body">
-        <h1 class="h4 mb-3 text-center">{{ vm.title }}</h1>
-        <form name="loginForm" novalidate ng-submit="vm.submit()">
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input
-              type="email"
-              name="email"
-              class="form-control"
-              ng-model="vm.credentials.email"
-              ng-required="true"
-              ng-minlength="5"
-              ng-pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
-            >
-            <span class="text-danger small d-block mt-1" ng-if="loginForm.email.$touched && loginForm.email.$invalid">
-              <span ng-if="loginForm.email.$error.required">Email is required.</span>
-              <span ng-if="!loginForm.email.$error.required && loginForm.email.$error.minlength">Email must be at least 5 characters.</span>
-              <span ng-if="!loginForm.email.$error.required && !loginForm.email.$error.minlength && loginForm.email.$error.pattern">Invalid email format.</span>
-            </span>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input
-              type="password"
-              name="password"
-              class="form-control"
-              ng-model="vm.credentials.password"
-              ng-required="true"
-              ng-minlength="1"
-            >
-            <span class="text-danger small d-block mt-1" ng-if="loginForm.password.$touched && loginForm.password.$invalid">
-              Password is required.
-            </span>
-            <div class="mt-2 small" ng-if="vm.credentials.password">
-              <div ng-class="{'text-success': vm.hasUppercase, 'text-danger': !vm.hasUppercase}">
-                <span ng-if="vm.hasUppercase">✔</span>
-                <span ng-if="!vm.hasUppercase">✘</span>
-                Uppercase letter
-              </div>
-              <div ng-class="{'text-success': vm.hasLowercase, 'text-danger': !vm.hasLowercase}">
-                <span ng-if="vm.hasLowercase">✔</span>
-                <span ng-if="!vm.hasLowercase">✘</span>
-                Lowercase letter
-              </div>
-              <div ng-class="{'text-success': vm.hasNumber, 'text-danger': !vm.hasNumber}">
-                <span ng-if="vm.hasNumber">✔</span>
-                <span ng-if="!vm.hasNumber">✘</span>
-                Number
-              </div>
-              <div ng-class="{'text-success': vm.hasSpecial, 'text-danger': !vm.hasSpecial}">
-                <span ng-if="vm.hasSpecial">✔</span>
-                <span ng-if="!vm.hasSpecial">✘</span>
-                Special character
-              </div>
-              <div ng-class="{'text-success': vm.hasMinLength, 'text-danger': !vm.hasMinLength}">
-                <span ng-if="vm.hasMinLength">✔</span>
-                <span ng-if="!vm.hasMinLength">✘</span>
-                8 characters or more
-              </div>
-            </div>
-          </div>
+<div class="container auth-page">
+  <div class="row min-vh-100 justify-content-center align-items-center">
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+      <div class="text-center mb-4">
+        <a href="#!/">
+          <img src="app/public/assets/logo31.png" alt="ITI H&M Solution" style="max-height: 52px;">
+        </a>
+      </div>
+      <div class="card border-0 shadow-lg">
+        <div class="card-body p-4 p-lg-5">
+            <h1 class="h4 mb-1 pharmacy-hero-title">Login</h1>
+            <p class="small pharmacy-hero-subtitle mb-4">Enter your credentials to continue</p>
 
-          <div class="mb-3" ng-if="vm.signedUpMessage">
-            <div class="alert alert-success mb-0">
-              Account created. You can log in now.
-            </div>
-          </div>
-          <div class="mb-3" ng-if="vm.error">
-            <div class="alert alert-danger mb-0">
-              {{ vm.error }}
-            </div>
-          </div>
+            <form name="loginForm" novalidate ng-submit="loginForm.$valid && vm.submit()">
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  ng-model="vm.credentials.email"
+                  ng-required="true"
+                  ng-pattern="/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/"
+                  placeholder="you@example.com"
+                >
+                <span class="text-danger small d-block mt-1" ng-if="loginForm.email.$touched && loginForm.email.$invalid">
+                  <span ng-if="loginForm.email.$error.required">Email is required.</span>
+                  <span ng-if="!loginForm.email.$error.required && loginForm.email.$error.pattern">Please enter a valid email.</span>
+                </span>
+              </div>
 
-          <button
-            type="submit"
-            class="btn btn-primary w-100"
-            ng-disabled="vm.loading || loginForm.$invalid"
-          >
-            <span ng-if="!vm.loading">Login</span>
-            <span ng-if="vm.loading">Logging in...</span>
-          </button>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <div class="pharmacy-password-wrapper">
+                  <input
+                    ng-attr-type="{{ vm.showPassword ? 'text' : 'password' }}"
+                    name="password"
+                    class="form-control"
+                    ng-model="vm.credentials.password"
+                    ng-required="true"
+                    ng-minlength="8"
+                    placeholder="••••••••"
+                  >
+                  <button
+                    type="button"
+                    class="pharmacy-password-toggle"
+                    ng-click="vm.showPassword = !vm.showPassword"
+                    ng-attr-aria-label="{{ vm.showPassword ? 'Hide password' : 'Show password' }}"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path fill="currentColor" d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/>
+                    </svg>
+                  </button>
+                </div>
+                <span class="text-danger small d-block mt-1" ng-if="loginForm.password.$touched && loginForm.password.$error.required">
+                  Password is required.
+                </span>
+                <span class="text-danger small d-block mt-1" ng-if="loginForm.password.$touched && !loginForm.password.$error.required && loginForm.password.$error.minlength">
+                  Password must be at least 8 characters.
+                </span>
+              </div>
 
-          <p class="text-center mt-3 mb-0 small text-muted">
-            Don't have an account?
-            <a href="#!/signup">Sign up</a>
-          </p>
-        </form>
+              <div class="mb-3" ng-if="vm.signedUpMessage">
+                <div class="alert alert-success mb-0 small">Account created. You can log in now.</div>
+              </div>
+              <div class="mb-3" ng-if="vm.error">
+                <div class="alert alert-danger mb-0 small">{{ vm.error }}</div>
+              </div>
+
+              <div class="mb-3 text-center" ng-if="vm.loading">
+                <loading-spinner></loading-spinner>
+              </div>
+
+              <button
+                type="submit"
+                class="btn w-100 pharmacy-cta-primary py-2"
+                ng-disabled="vm.loading || loginForm.$invalid"
+              >
+                <span ng-if="!vm.loading">Login</span>
+                <span ng-if="vm.loading">Logging in...</span>
+              </button>
+            </form>
+
+            <p class="text-center mt-4 mb-0 small pharmacy-hero-subtitle">
+              Don't have an account? <a href="#!/signup">Sign up</a>
+            </p>
+            <p class="text-center mt-2 mb-0">
+              <a href="#!/" class="small pharmacy-hero-subtitle">← Back to home</a>
+            </p>
+        </div>
       </div>
     </div>
   </div>

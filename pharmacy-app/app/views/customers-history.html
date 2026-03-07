@@ -3,7 +3,7 @@
 
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Purchase History — {{ vm.customer.full_name || 'Customer' }}</h5>
-      <a href="#!/customers" class="btn btn-outline-secondary btn-sm"> Back</a>
+      <a href="#!/customers" class="btn pharmacy-cta-secondary btn-sm">Back</a>
     </div>
 
     <div class="card-body">
@@ -16,31 +16,33 @@
       </div>
 
       
-      <div class="card mb-3" ng-repeat="invoice in vm.history">
+      <div class="card mb-3" ng-repeat="invoice in vm.history track by invoice.id">
         <div class="card-header d-flex justify-content-between">
           <span><strong>Invoice {{ invoice.id }}</strong></span>
           <span class="text-muted">{{ invoice.created_at | date:'MMM d, y' }}</span>
           <span class="badge bg-success">EGP {{ invoice.total_amount }}</span>
         </div>
         <div class="card-body p-0">
-          <table class="table table-sm mb-0">
-            <thead class="table-light">
+          <div class="table-responsive app-table-wrapper">
+            <table class="table table-sm mb-0 app-table">
+              <thead>
               <tr>
                 <th>Medicine</th>
                 <th>Qty</th>
                 <th>Price</th>
                 <th>Subtotal</th>
               </tr>
-            </thead>
-            <tbody>
-              <tr ng-repeat="item in invoice.invoice_items">
-                <td>{{ (item.medicines && item.medicines.name) || '—' }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>EGP {{ item.price }}</td>
-                <td>EGP {{ item.quantity * item.price }}</td>
-              </tr>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <tr ng-repeat="item in invoice.invoice_items track by $index">
+                  <td>{{ (item.medicines && item.medicines.name) || '—' }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>EGP {{ item.price }}</td>
+                  <td>EGP {{ item.quantity * item.price }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

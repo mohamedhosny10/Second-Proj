@@ -12,25 +12,27 @@
     <div class="card-body">
       <p><strong>Customer:</strong> {{ vm.invoice.customers && vm.invoice.customers.full_name }}</p>
       <p><strong>Total:</strong> {{ vm.invoice.total_amount | currency }}</p>
-      <p><strong>Date:</strong> {{ vm.invoice.created_at | date:'medium' }}</p>
-      <table class="table table-sm mt-3">
-        <thead>
-          <tr>
-            <th>Medicine</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="ii in vm.invoice.invoice_items">
-            <td>{{ ii.medicines && ii.medicines.name }}</td>
-            <td>{{ ii.quantity }}</td>
-            <td>{{ ii.price | currency }}</td>
-            <td>{{ ii.quantity * ii.price | currency }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <p><strong>Date:</strong> {{ vm.invoice.created_at | date:'MMM d, y' }}</p>
+      <div class="table-responsive app-table-wrapper mt-3">
+        <table class="table table-sm mb-0 app-table">
+          <thead>
+            <tr>
+              <th>Medicine</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="ii in vm.invoice.invoice_items track by $index">
+              <td>{{ ii.medicines && ii.medicines.name }}</td>
+              <td>{{ ii.quantity }}</td>
+              <td>{{ ii.price | currency }}</td>
+              <td>{{ ii.quantity * ii.price | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
