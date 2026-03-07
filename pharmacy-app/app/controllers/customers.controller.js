@@ -11,13 +11,36 @@ angular
       vm.customers = [];
       vm.customer = {};
       vm.searchText = '';
-      vm.isEdit = !!$routeParams.id;
+      vm.isEdit = !!$routeParams.id && $routeParams.id !== 'new';
       vm.errorMessage = '';
       vm.load = load;
       vm.save = save;
       vm.deleteCustomer = deleteCustomer;
       vm.search = search;
+      vm.confirmDelete = confirmDelete;
+      vm.history = [];
+      vm.isHistory = $route.current && $route.current.originalPath && $route.current.originalPath.indexOf('history') !== -1;
 
+      if (!vm.isEdit) {
+        vm.customer.created_at = new Date().toISOString();
+      }
+
+      if (vm.isHistory && $routeParams.id) {
+        customersService.getById($routeParams.id)
+          .then(function (data) {
+            vm.customer = data || {};
+          })
+          .catch(function (err) {
+            vm.errorMessage = err || 'Failed to load customer';
+          });
+        customersService.getPurchaseHistory($routeParams.id)
+          .then(function (data) {
+            vm.history = data || [];
+          })
+          .catch(function (err) {
+            vm.errorMessage = err || 'Failed to load history';
+          });
+      }
       if (vm.isEdit) {
         customersService.getById($routeParams.id)
           .then(function (data) {
@@ -33,13 +56,17 @@ angular
       }
 
       function load() {
+        vm.loading = true;
         customersService.getAll()
           .then(function (data) {
             vm.customers = data || [];
           })
           .catch(function (err) {
             vm.errorMessage = err || 'Failed to load customers';
-          });
+          })
+          .finally(function () { 
+            vm.loading = false;
+           });
       }
 
       function deleteCustomer(id) {
@@ -51,6 +78,13 @@ angular
             vm.errorMessage = err || 'Failed to delete customer';
           });
       }
+
+      function confirmDelete(id,name){
+        if(window.confirm('Delete customer ' + name + '"?')){
+          deleteCustomer(id);
+        }
+      }
+
 
       function search() {
         if (!vm.searchText) {

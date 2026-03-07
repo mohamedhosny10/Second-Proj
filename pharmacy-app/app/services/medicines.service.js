@@ -123,13 +123,40 @@ angular
         return deferred.promise;
       }
 
+      function getByName(name) {
+        var deferred = $q.defer();
+        var trimmed = (name && String(name).trim()) || '';
+        if (!trimmed) {
+          deferred.resolve(null);
+          return deferred.promise;
+        }
+        client
+          .from('medicines')
+          .select('id, name')
+          .ilike('name', trimmed)
+          .limit(1)
+          .then(function (result) {
+            if (result.error) {
+              deferred.resolve(null);
+            } else {
+              var row = result.data && result.data[0];
+              deferred.resolve(row || null);
+            }
+          })
+          .catch(function () {
+            deferred.resolve(null);
+          });
+        return deferred.promise;
+      }
+
       return {
         getAll: getAll,
         getById: getById,
         create: create,
         update: update,
         remove: remove,
-        getLowStock: getLowStock
+        getLowStock: getLowStock,
+        getByName: getByName
       };
     }
   ]);

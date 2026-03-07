@@ -18,5 +18,10 @@ angular
       $rootScope.$on('$routeChangeSuccess', refreshRole);
       $rootScope.$on('auth:login', refreshRole);
       $rootScope.$on('auth:logout', refreshRole);
+      $rootScope.$on('auth:roleUpdated', refreshRole);
+
+      if (authService.isAuthenticated()) {
+        authService.refreshUserRole();
+      }
     }
   ]);

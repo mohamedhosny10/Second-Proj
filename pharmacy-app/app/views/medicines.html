@@ -17,6 +17,7 @@
         class="form-control"
         placeholder="Search by name"
         ng-model="vm.search"
+        ng-model-options="{ debounce: 400 }"
         ng-change="vm.onSearchChange()"
       >
     </div>
@@ -33,10 +34,10 @@
   <div class="card mb-4">
     <div class="card-body">
       <h2 class="h5 mb-3">{{ vm.editing ? 'Edit medicine' : 'Create medicine' }}</h2>
-      <form name="medicineForm" ng-submit="vm.save()" novalidate>
+      <form name="medicineForm" ng-submit="vm.save(medicineForm)" novalidate>
         <div class="row g-3">
           <div class="col-md-4">
-            <label class="form-label">Name</label>
+            <label class="form-label">Name <span class="text-danger">*</span></label>
             <input
               type="text"
               name="name"
@@ -45,7 +46,7 @@
               ng-required="true"
               ng-minlength="2"
             >
-            <span class="text-danger small d-block" ng-if="medicineForm.name.$touched && medicineForm.name.$invalid">
+            <span class="text-danger small d-block" ng-if="medicineForm.name.$dirty && medicineForm.name.$invalid">
               <span ng-if="medicineForm.name.$error.required">Name is required.</span>
               <span ng-if="!medicineForm.name.$error.required && medicineForm.name.$error.minlength">Name must be at least 2 characters.</span>
             </span>
@@ -55,7 +56,7 @@
             <input type="text" name="category" class="form-control" ng-model="vm.form.category">
           </div>
           <div class="col-md-4">
-            <label class="form-label">Price</label>
+            <label class="form-label">Price <span class="text-danger">*</span></label>
             <input
               type="number"
               name="price"
@@ -65,13 +66,13 @@
               ng-required="true"
               ng-min="0"
             >
-            <span class="text-danger small d-block" ng-if="medicineForm.price.$touched && medicineForm.price.$invalid">
+            <span class="text-danger small d-block" ng-if="medicineForm.price.$dirty && medicineForm.price.$invalid">
               <span ng-if="medicineForm.price.$error.required">Price is required.</span>
               <span ng-if="!medicineForm.price.$error.required && medicineForm.price.$error.min">Price must be 0 or greater.</span>
             </span>
           </div>
           <div class="col-md-4">
-            <label class="form-label">Stock quantity</label>
+            <label class="form-label">Stock quantity <span class="text-danger">*</span></label>
             <input
               type="number"
               name="stock_quantity"
@@ -80,14 +81,22 @@
               ng-required="true"
               ng-min="0"
             >
-            <span class="text-danger small d-block" ng-if="medicineForm.stock_quantity.$touched && medicineForm.stock_quantity.$invalid">
+            <span class="text-danger small d-block" ng-if="medicineForm.stock_quantity.$dirty && medicineForm.stock_quantity.$invalid">
               <span ng-if="medicineForm.stock_quantity.$error.required">Stock is required.</span>
               <span ng-if="!medicineForm.stock_quantity.$error.required && medicineForm.stock_quantity.$error.min">Stock must be 0 or greater.</span>
             </span>
           </div>
           <div class="col-md-4">
             <label class="form-label">Expiry date</label>
-            <input type="date" name="expiry_date" class="form-control" ng-model="vm.form.expiry_date">
+            <input
+              type="date"
+              name="expiry_date"
+              class="form-control"
+              ng-model="vm.form.expiry_date"
+              min="{{ vm.todayForExpiry }}"
+              ng-change="vm.expiryError = null"
+            >
+            <span class="text-danger small d-block" ng-if="vm.expiryError">{{ vm.expiryError }}</span>
           </div>
         </div>
         <div class="mt-3">
@@ -120,14 +129,27 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              ng-repeat="m in vm.items"
-              medicine-row
-              medicine="m"
-              role="{{vm.currentRole}}"
-              on-delete="vm.deleteMedicine(id)"
-              on-edit="vm.startEdit(medicine)"
-            >
+            <tr ng-repeat="m in vm.items" ng-class="{'table-danger': vm.isExpired(m.expiry_date), 'table-warning': !vm.isExpired(m.expiry_date) && m.stock_quantity <= 10}">
+              <td>{{ m.name }}</td>
+              <td>{{ m.category }}</td>
+              <td>{{ m.price | currency }}</td>
+              <td ng-class="{'text-danger': m.stock_quantity <= 10, 'text-success': m.stock_quantity > 10}">
+                {{ m.stock_quantity }} ({{ m.stock_quantity | stockStatus }})
+              </td>
+              <td>{{ m.expiry_date | date:'yyyy-MM-dd' }}</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1" type="button" ng-click="vm.startEdit(m)">
+                  Edit
+                </button>
+                <button
+                  class="btn btn-sm btn-outline-danger"
+                  type="button"
+                  ng-if="vm.isAdmin"
+                  ng-click="vm.deleteMedicine(m.id)"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
             <tr ng-if="!vm.items.length && !vm.loading">
               <td colspan="6" class="text-center text-muted">
@@ -140,4 +162,3 @@
     </div>
   </div>
 </div>
-

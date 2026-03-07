@@ -63,6 +63,14 @@ angular
             roles: ['user', 'admin']
           }
         })
+        .when('/customers/:id/history', {
+          templateUrl: 'app/views/customers-history.html',
+          controller: 'CustomersController',
+          controllerAs: 'vm',
+          data: {
+            roles: ['user', 'admin']
+          }
+        })
         .when('/create-invoice', {
           templateUrl: 'app/views/create-invoice.html',
           controller: 'CreateInvoiceController',

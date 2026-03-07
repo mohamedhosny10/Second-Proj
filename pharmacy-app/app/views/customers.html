@@ -1,13 +1,19 @@
 <div class="container mt-4">
   <div class="card shadow-sm">
+
     <div class="alert alert-danger mx-3 mt-3" ng-if="vm.errorMessage">
       {{ vm.errorMessage }}
     </div>
+
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0">Customers</h5>
-      <a href="#!/customers/new" class="btn btn-primary btn-sm">+ Add Customer</a>
+      <a href="#!/customers/new" class="btn btn-primary btn-sm">
+        + Add Customer
+      </a>
     </div>
+
     <div class="card-body">
+
       <div class="row mb-3">
         <div class="col-md-4">
           <input
@@ -20,32 +26,56 @@
           >
         </div>
       </div>
+
+      <div class="text-center py-5" ng-if="vm.loading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted mt-2">Loading customers...</p>
+      </div>
       <div class="table-responsive">
         <table class="table table-hover align-middle">
           <thead class="table-light">
             <tr>
               <th>Name</th>
               <th>Phone</th>
+              <th>Address</th>
+              <th>Created at</th>
               <th class="text-end">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             <tr ng-repeat="item in vm.customers">
               <td>{{ item.full_name }}</td>
               <td>{{ item.phone }}</td>
+              <td>{{ item.address }}</td>
+              <td>{{ item.created_at | date:'MMM d, y – h:mm a' }}</td>
               <td class="text-end">
-                <a ng-href="#!/customers/edit/{{ item.id }}" class="btn btn-outline-secondary btn-sm me-2">Edit</a>
-                <button type="button" class="btn btn-outline-danger btn-sm" ng-click="vm.deleteCustomer(item.id)">
-                  Delete
-                </button>
+
+                <a ng-href="#!/customers/{{ item.id }}/history" class="btn btn-outline-info btn-sm me-2">
+                  History
+                </a>
+
+                <a ng-href="#!/customers/edit/{{ item.id }}" class="btn btn-outline-secondary btn-sm me-2">
+                  Edit
+                </a>
+
+               <button type="button" class="btn btn-outline-danger btn-sm" ng-click="vm.confirmDelete(item.id, item.full_name)">
+                 Delete
+               </button>
               </td>
             </tr>
+
             <tr ng-if="!vm.customers.length">
-              <td colspan="3" class="text-center text-muted py-4">No customers found</td>
+              <td colspan="5" class="text-center text-muted py-4">
+                No customers found
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
 </div>

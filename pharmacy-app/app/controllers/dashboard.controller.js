@@ -18,7 +18,7 @@ angular
             vm.loading = false;
           })
           .catch(function (err) {
-            vm.error = err;
+            vm.error = (err && err.message) ? err.message : String(err || 'Failed to load dashboard');
             vm.loading = false;
           });
       };

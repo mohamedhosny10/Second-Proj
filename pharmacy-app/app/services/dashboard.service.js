@@ -12,7 +12,8 @@ angular
           .select('*', { count: 'exact', head: true })
           .then(function (result) {
             if (result.error) {
-              throw new Error(result.error.message || 'Failed to load count');
+              var msg = result.error.message || result.error.hint || 'Failed to load count';
+              throw new Error(msg + ' (' + table + ')');
             }
             return result.count || 0;
           });
