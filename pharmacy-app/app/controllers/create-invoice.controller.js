@@ -1,14 +1,20 @@
 angular
-  .module('pharmacyApp.controllers')
-  .controller('CreateInvoiceController', [
-    '$location',
-    'authService',
-    'customersService',
-    'medicinesService',
-    'invoicesService',
-    function ($location, authService, customersService, medicinesService, invoicesService) {
+  .module("pharmacyApp.controllers")
+  .controller("CreateInvoiceController", [
+    "$location",
+    "authService",
+    "customersService",
+    "medicinesService",
+    "invoicesService",
+    function (
+      $location,
+      authService,
+      customersService,
+      medicinesService,
+      invoicesService,
+    ) {
       var vm = this;
-      vm.title = 'Create Invoice';
+      vm.title = "Create Invoice";
       vm.customers = [];
       vm.medicines = [];
       vm.selectedCustomerId = null;
@@ -18,19 +24,31 @@ angular
       vm.error = null;
 
       vm.loadCustomers = function () {
-        customersService.getAll().then(function (data) {
-          vm.customers = data || [];
-        }).catch(function (err) {
-          vm.error = (err && err.message) ? err.message : String(err || 'Failed to load customers');
-        });
+        customersService
+          .getAll()
+          .then(function (data) {
+            vm.customers = data || [];
+          })
+          .catch(function (err) {
+            vm.error =
+              err && err.message
+                ? err.message
+                : String(err || "Failed to load customers");
+          });
       };
 
       vm.loadMedicines = function () {
-        medicinesService.getAll().then(function (data) {
-          vm.medicines = data || [];
-        }).catch(function (err) {
-          vm.error = (err && err.message) ? err.message : String(err || 'Failed to load medicines');
-        });
+        medicinesService
+          .getAll()
+          .then(function (data) {
+            vm.medicines = data || [];
+          })
+          .catch(function (err) {
+            vm.error =
+              err && err.message
+                ? err.message
+                : String(err || "Failed to load medicines");
+          });
       };
 
       vm.addItem = function () {
@@ -38,7 +56,7 @@ angular
           medicine_id: null,
           medicine: null,
           quantity: 1,
-          price: 0
+          price: 0,
         });
         vm.updateTotal();
       };
@@ -57,7 +75,9 @@ angular
       };
 
       vm.onMedicineSelect = function (item) {
-        var m = vm.medicines.find(function (x) { return x.id === item.medicine_id; });
+        var m = vm.medicines.find(function (x) {
+          return x.id === item.medicine_id;
+        });
         if (m) {
           item.medicine = m;
           item.price = m.price;
@@ -67,7 +87,7 @@ angular
 
       vm.submit = function () {
         if (!vm.selectedCustomerId || !vm.items.length) {
-          vm.error = 'Select a customer and add at least one item.';
+          vm.error = "Select a customer and add at least one item.";
           return;
         }
         vm.loading = true;
@@ -78,29 +98,40 @@ angular
 
         var payload = {
           customer_id: vm.selectedCustomerId,
-          
+
           total_amount: vm.total,
           items: vm.items.map(function (i) {
             return {
               medicine_id: i.medicine_id,
               quantity: i.quantity,
-              price: i.price
+              price: i.price,
             };
-          })
+          }),
         };
 
-        invoicesService.createInvoice(payload)
+        vm.showSuccessModal = false;
+
+        invoicesService
+          .createInvoice(payload)
           .then(function () {
             vm.loading = false;
-            $location.path('/dashboard');
+            vm.showSuccessModal = true;
           })
           .catch(function (err) {
             vm.loading = false;
-            vm.error = (err && err.message) ? err.message : String(err || 'Failed to create invoice');
+            vm.error =
+              err && err.message
+                ? err.message
+                : String(err || "Failed to create invoice");
           });
+      };
+
+      vm.closeModalAndRedirect = function () {
+        vm.showSuccessModal = false;
+        $location.path("/dashboard");
       };
 
       vm.loadCustomers();
       vm.loadMedicines();
-    }
+    },
   ]);
