@@ -192,4 +192,51 @@
       </div>
     </div>
   </div>
+  <div
+    class="modal fade pharmacy-modal-overlay"
+    ng-class="{'show d-block': vm.showDeleteModal}"
+    tabindex="-1"
+    role="dialog"
+    ng-if="vm.showDeleteModal"
+  >
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm delete</h5>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            ng-click="vm.cancelDelete()"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-0">
+            Are you sure you want to delete
+            <strong>{{ vm.customerToDelete.full_name }}</strong>? This action
+            cannot be undone.
+          </p>
+          <p class="text-danger small mt-2 mb-0" ng-if="vm.deleteError">
+            {{ vm.deleteError }}
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            ng-click="vm.cancelDelete()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            ng-click="vm.executeDelete()"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

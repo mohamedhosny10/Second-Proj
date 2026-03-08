@@ -4,24 +4,33 @@
   <section class="hero position-relative overflow-hidden">
     <video
       class="position-absolute top-0 start-0 w-100 h-100"
-      style="object-fit: cover;"
+      style="object-fit: cover"
       autoplay
       muted
       loop
       playsinline
     >
-      <source src="app/public/assets/hero.mp4" type="video/mp4">
+      <source src="app/public/assets/hero.mp4" type="video/mp4" />
     </video>
-    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+    <div
+      class="hero-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+    >
       <div class="container text-center">
         <h1 class="pharmacy-hero-title display-3 display-md-2 mb-4 text-white">
           Modern Pharmacy Management
         </h1>
-        <p class="lead text-white mb-4 opacity-90" style="max-width: 540px; margin-left: auto; margin-right: auto;">
-          Manage inventory, customers, and invoices in one place. Fast, reliable, and easy to use.
+        <p
+          class="lead text-white mb-4 opacity-90"
+          style="max-width: 540px; margin-left: auto; margin-right: auto"
+        >
+          Manage inventory, customers, and invoices in one place. Fast,
+          reliable, and easy to use.
         </p>
         <div class="d-flex flex-wrap gap-3 justify-content-center">
-          <a href="#!/#search" class="btn pharmacy-cta-primary btn-lg px-4 py-3">
+          <a
+            href="#!/#search"
+            class="btn pharmacy-cta-primary btn-lg px-4 py-3"
+          >
             Search Medicines
           </a>
           <a href="#!/login" class="btn pharmacy-cta-primary btn-lg px-4 py-3">
@@ -35,38 +44,81 @@
   <section id="search" class="py-5 py-lg-6">
     <div class="container">
       <h2 class="pharmacy-hero-title h3 mb-4 text-center">Search Medicines</h2>
-      <p class="pharmacy-hero-subtitle text-center mb-4">Look up medicines by name. Price and availability shown.</p>
+      <p class="pharmacy-hero-subtitle text-center mb-4">
+        Look up medicines by name. Price and availability shown.
+      </p>
 
       <div class="row justify-content-center mb-4">
         <div class="col-12 col-md-8 col-lg-6">
-          <div class="input-group input-group-lg">
+          <div class="input-group input-group-lg position-relative">
             <input
               type="text"
               class="form-control"
               ng-model="vm.searchQuery"
+              ng-change="vm.fetchSuggestions()"
               ng-keyup="$event.keyCode === 13 && vm.search()"
               placeholder="Type medicine name..."
+              autocomplete="off"
+            />
+            <div
+              class="list-group position-absolute w-100 shadow-sm"
+              style="top: 100%; z-index: 1050"
+              ng-if="vm.recommendations.length > 0"
             >
-            <button type="button" class="btn pharmacy-cta-primary px-4" ng-click="vm.search()">
+              <button
+                type="button"
+                class="list-group-item list-group-item-action"
+                ng-repeat="r in vm.recommendations"
+                ng-click="vm.selectRecommendation(r)"
+              >
+                {{ r.name }}
+              </button>
+            </div>
+            <button
+              type="button"
+              class="btn pharmacy-cta-primary px-4"
+              ng-click="vm.search()"
+            >
               Search
             </button>
           </div>
         </div>
       </div>
 
-      <div class="alert alert-danger pharmacy-system-alert" ng-if="vm.searchError">{{ vm.searchError }}</div>
-      <div class="text-center pharmacy-hero-subtitle py-3" ng-if="vm.searchLoading">Loading...</div>
+      <div
+        class="alert alert-danger pharmacy-system-alert"
+        ng-if="vm.searchError"
+      >
+        {{ vm.searchError }}
+      </div>
+      <div
+        class="text-center pharmacy-hero-subtitle py-3"
+        ng-if="vm.searchLoading"
+      >
+        Loading...
+      </div>
 
-      <div ng-if="!vm.searchLoading && vm.searchResults.length === 0 && vm.searchQuery" class="text-center pharmacy-hero-subtitle py-4">
+      <div
+        ng-if="!vm.searchLoading && vm.searchResults.length === 0 && vm.searchQuery"
+        class="text-center pharmacy-hero-subtitle py-4"
+      >
         No medicines found for "{{ vm.searchQuery }}".
       </div>
-      <div ng-if="!vm.searchLoading && !vm.searchQuery" class="text-center pharmacy-hero-subtitle py-4">
+      <div
+        ng-if="!vm.searchLoading && !vm.searchQuery"
+        class="text-center pharmacy-hero-subtitle py-4"
+      >
         Enter a name above and click Search to see results.
       </div>
 
-      <div ng-if="!vm.searchLoading && vm.searchResults.length > 0" class="row g-3">
+      <div
+        ng-if="!vm.searchLoading && vm.searchResults.length > 0"
+        class="row g-3"
+      >
         <div class="col-12">
-          <p class="small pharmacy-hero-subtitle mb-2">{{ vm.searchResults.length }} result(s)</p>
+          <p class="small pharmacy-hero-subtitle mb-2">
+            {{ vm.searchResults.length }} result(s)
+          </p>
         </div>
         <div class="col-12">
           <div class="card">
@@ -75,24 +127,24 @@
                 <table class="table table-hover mb-0 app-table">
                   <thead>
                     <tr>
-                      <th>Medicine</th>
-                      <th>Category</th>
-                      <th>Price</th>
-                      <th>Availability</th>
+                      <th>MEDICINE</th>
+                      <th>CATEGORY</th>
+                      <th>PRICE</th>
+                      <th>AVAILABILITY</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr ng-repeat="m in vm.searchResults track by m.id">
                       <td>{{ m.name }}</td>
                       <td>{{ m.category || '—' }}</td>
-                      <td>{{ m.price | currency }}</td>
+                      <td>{{ m.price | currency:'EGP ' }}</td>
                       <td>
                         <span class="me-2">{{ m.stock_quantity }}</span>
                         <span
                           class="app-badge"
-                          ng-class="(m.stock_quantity | stockStatus) === 'Low Stock' ? 'app-badge--status-low' : 'app-badge--status-available'"
+                          ng-class="vm.getStockStatus(m.stock_quantity) === 'Low Stock' ? 'app-badge--status-low' : 'app-badge--status-available'"
                         >
-                          {{ m.stock_quantity | stockStatus }}
+                          {{ vm.getStockStatus(m.stock_quantity) }}
                         </span>
                       </td>
                     </tr>
@@ -106,32 +158,54 @@
     </div>
   </section>
 
-  <section id="about" class="py-5 py-lg-6" style="background-color: var(--pharmacy-bg-section); border-top: 1px solid var(--pharmacy-border);">
+  <section
+    id="about"
+    class="py-5 py-lg-6"
+    style="
+      background-color: var(--pharmacy-bg-section);
+      border-top: 1px solid var(--pharmacy-border);
+    "
+  >
     <div class="container">
       <h2 class="pharmacy-hero-title h3 mb-4 text-center">About Us</h2>
       <div class="row justify-content-center">
         <div class="col-12 col-lg-8">
           <p class="pharmacy-hero-subtitle text-center lead">
-            We are a modern pharmacy committed to quality healthcare and efficient management.
-            Our system helps staff manage medicines, track inventory, serve customers, and generate invoices — all in one place.
+            We are a modern pharmacy committed to quality healthcare and
+            efficient management. Our system helps staff manage medicines, track
+            inventory, serve customers, and generate invoices — all in one
+            place.
           </p>
           <p class="pharmacy-hero-subtitle text-center mb-0">
-            Genuine medicines, reliable stock, and professional service for our community.
+            Genuine medicines, reliable stock, and professional service for our
+            community.
           </p>
         </div>
       </div>
     </div>
   </section>
 
-  <footer class="py-4" style="background-color: var(--pharmacy-bg-primary); border-top: 1px solid var(--pharmacy-border);">
+  <footer
+    class="py-4"
+    style="
+      background-color: var(--pharmacy-bg-primary);
+      border-top: 1px solid var(--pharmacy-border);
+    "
+  >
     <div class="container">
       <div class="row align-items-center">
         <div class="col-12 col-md-6 text-center text-md-start mb-3 mb-md-0">
-          <strong class="pharmacy-hero-title d-block mb-1">Pharmacy Management System</strong>
-          <span class="small pharmacy-hero-subtitle">Contact: support@pharmacy.example.com | +20 123 456 7890</span>
+          <strong class="pharmacy-hero-title d-block mb-1"
+            >Pharmacy Management System</strong
+          >
+          <span class="small pharmacy-hero-subtitle"
+            >Contact: support@pharmacy.example.com | +20 123 456 7890</span
+          >
         </div>
         <div class="col-12 col-md-6 text-center text-md-end">
-          <span class="small pharmacy-hero-subtitle">&copy; {{ 2025 }} Pharmacy. All rights reserved.</span>
+          <span class="small pharmacy-hero-subtitle"
+            >&copy; {{ 2025 }} Pharmacy. All rights reserved.</span
+          >
         </div>
       </div>
     </div>
