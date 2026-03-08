@@ -814,3 +814,42 @@ body.pharmacy-theme,
   box-shadow: 0 0 0 2px rgba(15, 150, 156, 0.6);
   border-radius: 999px;
 }
+/* --- Minimal Success Modal --- */
+.pharmacy-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 22, 26, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.pharmacy-modal-dialog {
+  width: 100%;
+  max-width: 400px;
+  padding: 1rem;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
